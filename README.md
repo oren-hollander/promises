@@ -1,1 +1,1 @@
-https://docs.google.com/a/wix.com/presentation/d/1sVzP1Fu5tOrouxrAkBIIuwVAI67jjLCUSfyI7rhEbD4/edit?usp=sharing
+https://docs.google.com/a/wix.com/presentation/d/1sVzP1Fu5tOrouxrAkBIIuwVAI67jjLCUSfyI7rhEbD4
