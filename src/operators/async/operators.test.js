@@ -1,5 +1,5 @@
-import { reduce } from 'lodash/fp'
 import { add, sub, mul, div } from './operators'
+import { isUndefined } from 'lodash/fp'
 
 describe('operators', () => {
   test('add', done => {
@@ -36,7 +36,7 @@ describe('operators', () => {
     })
   })
 
-  test('chain', done => {
+  test('sequence', done => {
     mul(3, 4, result => {
       add(2, result, result => {
         expect(result).toBe(14)
@@ -45,7 +45,7 @@ describe('operators', () => {
     })
   })
 
-  test('chain with error', done => {
+  test('sequence with error', done => {
     mul(2, 0, result => {
       div(3, result, result => {
         add(2, result)
@@ -58,5 +58,28 @@ describe('operators', () => {
 
   test('sum', () => {
     // don't even try...
+  })
+
+  test('parallel', done => {
+
+    let count = 0
+    let first, second
+
+    const multiply = result => {
+      count++
+      if(count === 1){
+        first = result
+      }
+      else if(count === 2) {
+        second = result
+        mul(first, second, result => {
+          expect(result).toBe(45)
+          done()          
+        })
+      }
+    }
+
+    add(2, 3, multiply)
+    add(4, 5, multiply)
   })
 })

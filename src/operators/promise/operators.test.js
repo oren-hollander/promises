@@ -1,5 +1,6 @@
 import { add, sub, mul, div } from './operators'
 import { flip, reduce, expectToBe } from '../../util/util'
+import { spread } from 'lodash/fp'
 
 describe('async operators', () => {
   test('add', done => {
@@ -49,7 +50,7 @@ describe('async operators', () => {
       .catch(done.fail)
   )
 
-  test.skip('chain with error and bad test', done => 
+  test.skip('sequence with error and bad test', done => 
     mul(3, 4)
       .then(add(2))
       .then(flip(div)(0))
@@ -58,7 +59,7 @@ describe('async operators', () => {
       .catch(done.fail)
   )
 
-  test('chain with error', done => 
+  test('sequence with error', done => 
     mul(3, 4)
       .then(add(2))
       .then(flip(div)(0))
@@ -74,4 +75,34 @@ describe('async operators', () => {
       .then(done)
       .catch(done.fail)
   )
+
+  test('reduce with error', done => {
+    reduce(div, 0, [1, 0, 3, 4])
+      .catch(expectToBe('Division by zero'))
+      .then(done)
+      .catch(done.fail)
+  })
+
+  test('parallel', done => {
+    Promise.all([
+      add(2, 3),
+      add(4, 5)
+    ])
+      .then(spread(mul))
+      .then(expectToBe(45))
+      .then(done)
+      .catch(done.fail)
+  })
+
+  test('nested', done => {
+    const addAndMul = (a, b) => 
+      add(a, b)
+        .then(r => mul(r, b).then(r2 => [r, r2]))
+        .then(spread(add))
+
+    addAndMul(2, 3)
+      .then(expectToBe(20))
+      .then(done)
+      .catch(done.fail) 
+  })
 })

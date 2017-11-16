@@ -1,9 +1,9 @@
 import { head, tail, isEmpty, curry } from 'lodash/fp'
 
-export const reduce = (iter, acc, col) => 
+export const reduce = async (iter, acc, col) => 
   isEmpty(col) 
-    ? Promise.resolve(acc) 
-    : iter(acc, head(col)).then(result => reduce(iter, result, tail(col)))
+    ? acc
+    : reduce(iter, await iter(acc, head(col)), tail(col))
 
 export const flip = f => a => b => f(b)(a)
     
