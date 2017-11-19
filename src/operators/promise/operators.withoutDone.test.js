@@ -3,7 +3,7 @@ import { flip, reduce, expectToBe } from '../../util/util'
 import { spread } from 'lodash/fp'
 
 describe('async operators', () => {
-  test('add (without done)', () => add(1, 2).then(expectToBe(3)))
+  test('add', () => add(1, 2).then(expectToBe(3)))
 
   test('sub', () => sub(1, 2).then(expectToBe(-1)))
 

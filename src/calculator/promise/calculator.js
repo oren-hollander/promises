@@ -1,4 +1,4 @@
-import { split, toNumber, chunk, map, head, tail } from 'lodash/fp'
+import { split, toNumber, chunk, map, head, tail, flow } from 'lodash/fp'
 import { add, sub, mul, div } from '../../operators/promise/operators'
 import { reduce, flip } from '../../util/util'
 
@@ -19,6 +19,8 @@ const parseTerm = term => {
   }
 }
 
+const parseTerms = map(parseTerm)
+
 const applySecondOperand = (operand, operator) => operator(operand)
 
 const applyFirstOperand = ([operator, operand]) => flip(operator)(operand)
@@ -29,8 +31,10 @@ const calculateTerms = terms => reduce(
   map(applyFirstOperand, pairs(tail(terms)))
 )
 
-const splitToTerms = split(' ')
+const tokenize = split(' ')
 
-const parseTerms = map(parseTerm)
-
-export const calculate = expression => calculateTerms(parseTerms(splitToTerms(expression)))
+export const calculate = flow(
+  tokenize,
+  parseTerms,
+  calculateTerms
+)
