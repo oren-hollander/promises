@@ -1,5 +1,5 @@
 import { add, sub, mul, div } from './operators'
-import { flip, reduce, expectToBe } from '../../util/util'
+import { flip, reduce, expectToBe, fail } from '../../util/util'
 import { spread } from 'lodash/fp'
 
 describe('async operators', () => {
@@ -24,9 +24,24 @@ describe('async operators', () => {
 
   test('sequence with error', async () => {
     try {
-      await div(await add(2, await mul(3, 4)), 0) 
+      await div(await add(3, await mul(1, 2)), 0) 
+      throw 'Should not succeed'
     }
     catch(e) {
+      expect(e).toBe('Division by zero')
+    }
+  })
+
+  test('sum', async () => 
+    expect(await reduce(add, 0, [1, 2, 3, 4])).toBe(10)
+  )
+
+  test('reduce with error', async () => {
+    try {
+      await reduce(div, 1, [1, 0, 3, 4])      
+      throw 'Should not succeed'
+    }
+    catch(e){
       expect(e).toBe('Division by zero')
     }
   })
@@ -34,18 +49,18 @@ describe('async operators', () => {
   test('parallel', async () => {
     const [a, b] = await Promise.all([
       add(2, 3),
-      add(4, 5)
+      sub(4, 2)
     ])
-    expect(await mul(a, b)).toBe(45)
+    expect(await div(a, b)).toBe(2.5)
   })
 
-  test('nested', async () => {
-    const addAndMul = async (a, b) => {
-      const aPlusB = await add(a, b)
-      const aPlusBTimesB = await mul(aPlusB, b)
-      return await add(aPlusB, aPlusBTimesB)
-    }
+  const addAndMul = async (a, b) => {
+    const r1 = await add(a, b)
+    const r2 = await mul(r1, b)
+    return await add(r1, r2)
+  }
 
+  test('nested', async () => 
     expect(await addAndMul(2, 3)).toBe(20)
-  })
+  )
 })

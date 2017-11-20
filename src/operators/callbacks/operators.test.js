@@ -1,5 +1,5 @@
 import { add, sub, mul, div } from './operators'
-import { isUndefined } from 'lodash/fp'
+import { isUndefined, delay } from 'lodash/fp'
 
 describe('operators', () => {
   test('add', done => {
@@ -60,22 +60,26 @@ describe('operators', () => {
   test('sequence', done => {
     mul(3, 4, result => {
       add(2, result, result => {
-        try {
-          expect(result).toBe(14)
-          done()  
-        }
-        catch(e){
-          done.fail(e)
-        }
+        div(result, 2, result => {
+          try {
+            expect(result).toBe(7)
+            done()  
+          }
+          catch(e){
+            done.fail(e)
+          }
+        }, done.fail)
       })
     })
   })
 
   test('sequence with error', done => {
-    mul(2, 0, result => {
-      div(3, result, done.fail, error => {
-        expect(error).toBe('Division by zero')
-        done()
+    mul(1, 2, result => {
+      add(result, 3, result => {
+        div(result, 0, done.fail, error => {
+          expect(error).toBe('Division by zero')
+          done()
+        })
       })
     })
   })
@@ -85,29 +89,45 @@ describe('operators', () => {
   })
 
   test('parallel', done => {
-    let count = 0
-    let first, second
+    let results = [], count = 0
 
-    const multiply = result => {
+    const setResult = resultIndex => result => {
+      results[resultIndex] = result
       count++
-      if(count === 1){
-        first = result
-      }
-      else if(count === 2) {
-        second = result
-        mul(first, second, result => {
+      if(count === 2){
+        div(results[0], results[1], result => {
           try {
-            expect(result).toBe(45)
+            expect(result).toBe(2.5)
             done()          
           }
           catch(e){
             done.fail(e)
           }
-        })
+        }, done.fail) 
       }
     }
 
-    add(2, 3, multiply)
-    add(4, 5, multiply)
+    add(2, 3, setResult(0))
+    sub(4, 2, setResult(1))
   })
+
+  const addAndMul = (a, b, onSuccess) => {
+    add(a, b, r1 => {
+      mul(r1, b, r2 => {
+        add(r1, r2, onSuccess)
+      })
+    })
+  }
+
+  test('nested', done => 
+    addAndMul(2, 3, result => {
+      try {
+        expect(result).toBe(20) 
+        done() 
+      }
+      catch(e){
+        done.fail(e)
+      }
+    })
+  )
 })

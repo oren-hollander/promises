@@ -25,12 +25,12 @@ describe('operators', () => {
   })
 
   test('sequence', () => {
-    expect(add(2, mul(3, 4))).toBe(14)
+    expect(div(add(2, mul(3, 4)), 2)).toBe(7)
   })
 
   test('sequence with error', () => {
     expect(() => {
-      add(2, div(3, mul(2, 0)))
+      div(add(mul(1, 2), 3), 0)
     }).toThrow('Division by zero')
   })
 
@@ -43,11 +43,15 @@ describe('operators', () => {
   })
 
   test('parallel', () => {
-    expect(mul(add(2, 3), add(4, 5))).toBe(45)
+    expect(div(add(2, 3), sub(4, 2))).toBe(2.5)
   })
 
   test('nested', () => {
-    const addAndMul = (a, b) => mul(a, add(a, b))
-    expect(addAndMul(3, 5)).toBe(24)
+    const addAndMul = (a, b) => {
+      const x = add(a, b)
+      return add(x, mul(x, b))
+    } 
+    
+    expect(addAndMul(2, 3)).toBe(20)
   })
 })

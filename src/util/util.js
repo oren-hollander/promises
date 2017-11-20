@@ -8,3 +8,7 @@ export const reduce = async (iter, acc, col) =>
 export const flip = f => a => b => f(b)(a)
     
 export const expectToBe = expected => provided => expect(provided).toBe(expected)
+
+export const fail = message => () => {
+  throw message
+}

@@ -86,10 +86,10 @@ describe('async operators', () => {
   test('parallel', done => {
     Promise.all([
       add(2, 3),
-      add(4, 5)
+      sub(4, 2)
     ])
-      .then(spread(mul))
-      .then(expectToBe(45))
+      .then(spread(div))
+      .then(expectToBe(2.5))
       .then(done)
       .catch(done.fail)
   })
