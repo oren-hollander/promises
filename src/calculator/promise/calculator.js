@@ -21,14 +21,14 @@ const parseToken = token => {
 
 const parse = map(parseToken)
 
-const applySecondOperand = (operand, operator) => operator(operand)
+const applyFirstOperand = (operand, operator) => operator(operand)
 
-const applyFirstOperand = ([operator, operand]) => flip(operator)(operand)
+const applySecondOperand = ([operator, operand]) => flip(operator)(operand)
 
 const calculateTerms = terms => reduce(
-  applySecondOperand, 
+  applyFirstOperand, 
   head(terms),
-  map(applyFirstOperand, pairs(tail(terms)))
+  map(applySecondOperand, pairs(tail(terms)))
 )
 
 const tokenize = split(' ')
