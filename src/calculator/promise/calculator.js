@@ -4,8 +4,8 @@ import { reduce, flip } from '../../util/util'
 
 const pairs = chunk(2)
 
-const parseTerm = term => {
-  switch(term){
+const parseToken = token => {
+  switch(token){
     case '+': 
       return add
     case '-':
@@ -15,11 +15,11 @@ const parseTerm = term => {
     case '/':
       return div
     default: 
-      return toNumber(term)
+      return toNumber(token)
   }
 }
 
-const parseTerms = map(parseTerm)
+const parse = map(parseToken)
 
 const applySecondOperand = (operand, operator) => operator(operand)
 
@@ -35,6 +35,6 @@ const tokenize = split(' ')
 
 export const calculate = flow(
   tokenize,
-  parseTerms,
+  parse,
   calculateTerms
 )
