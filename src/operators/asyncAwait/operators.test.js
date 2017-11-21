@@ -73,7 +73,7 @@ describe('async operators', () => {
     const addAndMul = async (a, b) => {
       const r1 = await add(a, b)
       const r2 = await mul(r1, b)
-      return await add(r1, r2)
+      return add(r1, r2)
     }
 
     expect(await addAndMul(2, 3)).toBe(20)

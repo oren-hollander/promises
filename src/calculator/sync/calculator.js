@@ -1,23 +1,17 @@
-import { split, toNumber, chunk, map, reduce, head, tail, flow } from 'lodash/fp'
+import { split, toNumber, chunk, map, reduce, head, tail, flow, defaultTo } from 'lodash/fp'
 import { add, sub, mul, div } from '../../operators/sync/operators'
 import { flip } from '../../util/util'
 
 const pairs = chunk(2)
 
-const parseToken = token => {
-  switch(token){
-    case '+': 
-      return add
-    case '-':
-      return sub
-    case '*':
-      return mul
-    case '/':
-      return div
-    default: 
-      return toNumber(token)
-  }
+const symbols = {
+  '+': add,
+  '-': sub,
+  '*': mul,
+  '/': div
 }
+
+const parseToken = token => defaultTo(toNumber(token), symbols[token])
 
 const parse = map(parseToken)
 
