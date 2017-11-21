@@ -16,6 +16,11 @@ describe('async operators', () => {
       .then(fail('Should not succeed'))
       .catch(expectToBe('Division by zero')))
 
+  test('division by zero alternative', () => 
+    div(1, 0)
+      .then(fail('Should not succeed'), expectToBe('Division by zero'))
+  )
+  
   test('sequence', () => 
     mul(3, 4)
       .then(add(2))
@@ -57,4 +62,16 @@ describe('async operators', () => {
     addAndMul(2, 3)
       .then(expectToBe(20))
   )
+
+  test('nested alternative', () => {
+    const addAndMul = (a, b) => 
+      add(a, b)
+        .then(r1 => mul(r1, b)
+          .then(r2 => add(r1, r2)
+        )
+      )
+
+    addAndMul(2, 3)
+      .then(expectToBe(20))
+  })
 })

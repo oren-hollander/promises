@@ -14,6 +14,7 @@ describe('async operators', () => {
   test('division by zero', async () => {
     try {
       await div(1, 0)
+      throw 'Should not succeed'
     }
     catch(e) {
       expect(e).toBe('Division by zero')
@@ -46,7 +47,7 @@ describe('async operators', () => {
     }
   })
 
-  test('parallel', async () => {
+  test('parallel', async () => {    
     const [a, b] = await Promise.all([
       add(2, 3),
       sub(4, 2)
@@ -54,13 +55,27 @@ describe('async operators', () => {
     expect(await div(a, b)).toBe(2.5)
   })
 
-  const addAndMul = async (a, b) => {
-    const r1 = await add(a, b)
-    const r2 = await mul(r1, b)
-    return await add(r1, r2)
-  }
+  test('parallel alternative 1', async () => {
+    const a = await add(2, 3)
+    const b = await sub(4, 2)
 
-  test('nested', async () => 
+    expect(await div(a, b)).toBe(2.5)
+  })
+
+  test('parallel alternative 2', async () => {
+    const a = add(2, 3)
+    const b = sub(4, 2)
+
+    expect(await div(await a, await b)).toBe(2.5)
+  })
+
+  test('nested', async () => {
+    const addAndMul = async (a, b) => {
+      const r1 = await add(a, b)
+      const r2 = await mul(r1, b)
+      return await add(r1, r2)
+    }
+
     expect(await addAndMul(2, 3)).toBe(20)
-  )
+  })
 })
